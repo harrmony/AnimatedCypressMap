@@ -144,6 +144,11 @@
         "Cat Track (lower)": "open",
         "Hose Side": "open",
         "Trumpeter": "open",
+        "Blow-By": "open",
+        "Shuttle": "open",
+        "Blaster": "open",
+        "Webb-Site": "open",
+        "Hut Run": "open",
         "Lower Trumpeter": "open",
         "Upper Bowen": "open",
         "Bowen Face": "open",
@@ -159,10 +164,7 @@
       "trails": {
         "Ripcord": "open",
         "Tomcat": "open",
-        "Glades": "open",
-        "Humpty Dumpty": "open",
-        "T-33": "open",
-        "Horsefly Canyon": "open"
+        "Humpty Dumpty": "open"
       }
     },
     {
@@ -171,7 +173,10 @@
         
       },
       "trails": {
-        
+        "Glades": "open",
+        "Humpty Dumpty": "open",
+        "T-33": "open",
+        "Horsefly Canyon": "open"
       }
     },
     {
