@@ -13,12 +13,12 @@
     "summerLiftStatus": null
   },
   "lifts": {
-    "Eagle Express": "closed",
-    "Lions Express": "closed",
+    "Eagle Express": "open",
+    "Lions Express": "open",
     "Raven Ridge": "closed",
-    "Easy Rider": "closed",
-    "Sky Quad": "closed",
-    "Midway Chair": "closed"
+    "Easy Rider": "open",
+    "Sky Quad": "open",
+    "Midway Chair": "open"
   },
   "trails": {
     "Panorama": "closed",
