@@ -14,7 +14,7 @@ const BASE_IMAGE_PATH = "../main/CypressIGPost.png";
 // This URL must point to the data branch file AFTER it is pushed
 // (we’ll adjust the workflow order so it is pushed before posting)
 const IMAGE_URL =
-  "https://raw.githubusercontent.com/harrmony/cypress-status-map/data/ig_post.png";
+  "https://raw.githubusercontent.com/harrmony/AnimatedCypressMap/data/ig_post.png";
 
 const IG_USER_ID = process.env.IG_USER_ID;
 const ACCESS_TOKEN = process.env.IG_ACCESS_TOKEN;
