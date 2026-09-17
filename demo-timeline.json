@@ -2,118 +2,126 @@
   "steps": [
     {
       "time": "08:00",
-      "lifts": {
-        "Easy Rider": "open",
-        "Midway Chair": "open"
-      },
-      "trails": {
-        "Panorama": "open",
-        "Collins": "open",
-        "Horizon": "open"
-      }
+      "lifts": {},
+      "trails": {}
     },
     {
       "time": "09:00",
-      "lifts": {
-        "Lions Express": "open"
-      },
-      "trails": {
-        "Fork": "open",
-        "Lower Fork": "open",
-        "Gibsons": "open",
-        "Upper Bowen": "open",
-        "Rainbow": "open"
-      }
+      "lifts": {},
+      "trails": {}
     },
     {
       "time": "10:00",
       "lifts": {
         "Eagle Express": "open",
-        "Raven Ridge": "open"
+        "Lions Express": "open"
       },
       "trails": {
-        "Ripcord": "open",
-        "Top Gun": "open",
-        "T-33": "open",
-        "Glades": "open",
-        "Tomcat": "open",
-        "Horsefly Canyon": "open"
+        "Panorama": "open",
+        "Windjammer": "open",
+        "Unrun": "open",
+        "Fork": "open",
+        "PGS": "open",
+        "Lower Fork": "open",
+        "Cascade": "open",
+        "Collins": "open",
+        "Horizon": "open",
+        "Primary Power": "open",
+        "Horizon By-Pass": "open",
+        "Cat Track (upper)": "open",
+        "Cat Track (lower)": "open",
+        "Hutch": "open"
       }
     },
     {
       "time": "11:00",
       "lifts": {
-        "Sky Quad": "open"
+        "Sky Quad": "open",
+        "Easy Rider": "open",
+        "Midway Chair": "open"
       },
       "trails": {
-        "Windjammer": "open",
-        "Cascade": "open",
-        "Trumpeter": "open",
+        "Ripcord": "open",
+        "Tomcat": "open",
+        "Glades": "open",
+        "T-33": "open",
+        "Horsefly Canyon": "open",
         "B-Hip": "open",
-        "Blow-By": "open"
+        "Hose Side": "open",
+        "Trumpeter": "open",
+        "Lower Trumpeter": "open",
+        "Upper Bowen": "open",
+        "Bowen Face": "open",
+        "Runway": "open",
+        "Lower Bowen": "open"
       }
     },
     {
       "time": "12:00",
-      "trails": {
-        "Crazy Raven": "open",
-        "3 Bears": "open",
-        "First Sun": "open",
-        "Black on Black": "open",
-        "Meteor": "open"
-      }
+      "lifts": {},
+      "trails": {}
     },
     {
       "time": "13:00",
-      "trails": {
-        "Shore Line": "open",
-        "Black Fly": "open",
-        "Runway": "open",
-        "Shuttle": "open",
-        "Blaster": "open"
-      }
+      "lifts": {},
+      "trails": {}
     },
     {
       "time": "14:00",
-      "lifts": {
-        "Raven Ridge": "on-hold"
-      },
-      "trails": {
-        "Hut Run": "open",
-        "Webb-Site": "open",
-        "Bowen Face": "open"
-      }
+      "lifts": {},
+      "trails": {}
     },
     {
       "time": "15:00",
-      "lifts": {
-        "Raven Ridge": "open"
-      },
-      "trails": {
-        "Lower Bowen": "open",
-        "Primary Power": "open",
-        "Slash": "open"
-      }
+      "lifts": {},
+      "trails": {}
     },
     {
       "time": "16:00",
+      "lifts": {
+        "Sky Quad": "closed"
+      },
       "trails": {
-        "Top Gun": "closed",
         "Ripcord": "closed",
-        "Glades": "closed"
+        "Tomcat": "closed",
+        "T-33": "closed",
+        "Horsefly Canyon": "closed",
+        "Glades": "closed",
+        "Top Gun": "closed"
       }
     },
     {
       "time": "17:00",
       "lifts": {
-        "Raven Ridge": "closed",
-        "Sky Quad": "closed"
+        "Easy Rider": "closed",
+        "Midway Chair": "closed"
       },
       "trails": {
-        "Crazy Raven": "closed",
-        "Black on Black": "closed",
-        "Meteor": "closed"
+        "Windjammer": "closed",
+        "Unrun": "closed",
+        "PGS": "closed",
+        "Primary Power": "closed",
+        "Horizon By-Pass": "closed",
+        "Cat Track (upper)": "closed",
+        "Cat Track (lower)": "closed",
+        "Hutch": "closed",
+        "B-Hip": "closed",
+        "Hose Side": "closed",
+        "Trumpeter": "closed",
+        "Lower Trumpeter": "closed",
+        "Upper Bowen": "closed",
+        "Bowen Face": "closed",
+        "Runway": "closed",
+        "Lower Bowen": "closed"
       }
+    },
+    {
+      "time": "18:00",
+      "lifts": {
+        "Eagle Express": "closed",
+        "Lions Express": "closed"
+      },
+      "trails": {}
     }
   ]
 }
