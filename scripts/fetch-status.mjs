@@ -498,7 +498,7 @@ if (snapToday10Valid && snapYest3 && !alreadyFired) {
     trailsClosed: trailsDiff.closed
     });
 
-    const MAP_URL = "https://harrmony.github.io/cypress-status-map/";
+    const MAP_URL = "https://harrmony.github.io/AnimatedCypressMap/";
     const caption_image = caption;
     // IG caption includes the link, but the image caption does not
     const caption_ig = `${caption}\n\nLive map: ${MAP_URL}`;
