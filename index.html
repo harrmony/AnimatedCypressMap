@@ -348,21 +348,31 @@
 
 
     function updateDemoLayers() {
-
+    
       for (const item of demoLayers) {
-
+    
         const bucket =
           item.kind === "lift"
             ? demoState.lifts
             : demoState.trails;
-
+    
         const status =
           bucket[item.name] ?? "closed";
-
+    
+        // Get full style, but DON'T pass weight into setStyle().
+        // Leaflet.curve has a compatibility bug when dynamically
+        // updating line weight with modern Leaflet.
+        const style = getStyle(status, item.kind);
+    
+        const {
+          weight,
+          ...dynamicStyle
+        } = style;
+    
         item.layer.setStyle(
-          getStyle(status, item.kind)
+          dynamicStyle
         );
-
+    
         item.layer.setTooltipContent(
           `${item.name} — ${readableStatus(status)}`
         );
