@@ -8,16 +8,6 @@
   <link rel="apple-touch-icon" href="favicon.png">
 
 
-    <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-WJ14QK5M5Q"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-WJ14QK5M5Q', { anonymize_ip: true });
-  </script>
-
-
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-curve@1.0.0/leaflet.curve.js"></script>
@@ -149,7 +139,7 @@
       const [overlays, curvesData, status] = await Promise.all([
         fetch('overlays.geojson?ts=' + Date.now()).then(r => r.json()),
         fetch('curves.json?ts=' + Date.now()).then(r => r.json()),
-        fetch('https://raw.githubusercontent.com/harrmony/cypress-status-map/data/status.json?ts=' + Date.now()).then(r => r.json())
+        fetch('https://raw.githubusercontent.com/harrmony/AnimatedCypressMap/data/status.json?ts=' + Date.now()).then(r => r.json())
       ]);
 
       function formatVancouverTime(isoString) {
