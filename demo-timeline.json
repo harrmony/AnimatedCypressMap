@@ -122,35 +122,26 @@
       },
       "trails": {
         "Panorama": "open",
-        "Windjammer": "open",
-        "Unrun": "open",
         "Fork": "open",
-        "PGS": "open",
         "Lower Fork": "open",
         "Cascade": "open",
         "Collins": "open",
         "Horizon": "open",
-        "Primary Power": "open",
-        "Horizon By-Pass": "open",
-        "Cat Track (upper)": "open",
-        "Cat Track (lower)": "open",
         "Hutch": "open"
       }
     },
     {
       "time": "11:00",
       "lifts": {
-        "Sky Quad": "open",
         "Easy Rider": "open",
         "Midway Chair": "open"
       },
       "trails": {
-        "Ripcord": "open",
-        "Tomcat": "open",
-        "Glades": "open",
-        "T-33": "open",
-        "Horsefly Canyon": "open",
-        "B-Hip": "open",
+        "Windjammer": "open",
+        "Primary Power": "open",
+        "Horizon By-Pass": "open",
+        "Cat Track (upper)": "open",
+        "Cat Track (lower)": "open",
         "Hose Side": "open",
         "Trumpeter": "open",
         "Lower Trumpeter": "open",
@@ -163,10 +154,15 @@
     {
       "time": "12:00",
       "lifts": {
-        
+        "Sky Quad": "open"
       },
       "trails": {
-        
+        "Ripcord": "open",
+        "Tomcat": "open",
+        "Glades": "open",
+        "Humpty Dumpty": "open",
+        "T-33": "open",
+        "Horsefly Canyon": "open"
       }
     },
     {
@@ -184,7 +180,9 @@
         
       },
       "trails": {
-        
+        "Unrun": "open",
+        "PGS": "open",
+        "B-Hip": "open",
       }
     },
     {
@@ -193,7 +191,11 @@
         
       },
       "trails": {
-        
+        "PGS": "closed",
+        "Cascade": "closed",
+        "Unrun": "closed",
+        "Trumpeter": "closed",
+        "Lower Trumpeter": "closed",
       }
     },
     {
@@ -218,8 +220,6 @@
       },
       "trails": {
         "Windjammer": "closed",
-        "Unrun": "closed",
-        "PGS": "closed",
         "Primary Power": "closed",
         "Horizon By-Pass": "closed",
         "Cat Track (upper)": "closed",
@@ -227,8 +227,6 @@
         "Hutch": "closed",
         "B-Hip": "closed",
         "Hose Side": "closed",
-        "Trumpeter": "closed",
-        "Lower Trumpeter": "closed",
         "Upper Bowen": "closed",
         "Bowen Face": "closed",
         "Runway": "closed",
@@ -250,11 +248,6 @@
         "Windjammer": "closed",
         "Fork": "closed",
         "Lower Fork": "closed",
-        "PGS": "closed",
-        "Cascade": "closed",
-        "Unrun": "closed",
-        "Trumpeter": "closed",
-        "Lower Trumpeter": "closed",
         "Hose Side": "closed",
         "B-Hip": "closed",
         "Blow-By": "closed",
