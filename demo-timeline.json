@@ -1,0 +1,119 @@
+{
+  "steps": [
+    {
+      "time": "08:00",
+      "lifts": {
+        "Easy Rider": "open",
+        "Midway Chair": "open"
+      },
+      "trails": {
+        "Panorama": "open",
+        "Collins": "open",
+        "Horizon": "open"
+      }
+    },
+    {
+      "time": "09:00",
+      "lifts": {
+        "Lions Express": "open"
+      },
+      "trails": {
+        "Fork": "open",
+        "Lower Fork": "open",
+        "Gibsons": "open",
+        "Upper Bowen": "open",
+        "Rainbow": "open"
+      }
+    },
+    {
+      "time": "10:00",
+      "lifts": {
+        "Eagle Express": "open",
+        "Raven Ridge": "open"
+      },
+      "trails": {
+        "Ripcord": "open",
+        "Top Gun": "open",
+        "T-33": "open",
+        "Glades": "open",
+        "Tomcat": "open",
+        "Horsefly Canyon": "open"
+      }
+    },
+    {
+      "time": "11:00",
+      "lifts": {
+        "Sky Quad": "open"
+      },
+      "trails": {
+        "Windjammer": "open",
+        "Cascade": "open",
+        "Trumpeter": "open",
+        "B-Hip": "open",
+        "Blow-By": "open"
+      }
+    },
+    {
+      "time": "12:00",
+      "trails": {
+        "Crazy Raven": "open",
+        "3 Bears": "open",
+        "First Sun": "open",
+        "Black on Black": "open",
+        "Meteor": "open"
+      }
+    },
+    {
+      "time": "13:00",
+      "trails": {
+        "Shore Line": "open",
+        "Black Fly": "open",
+        "Runway": "open",
+        "Shuttle": "open",
+        "Blaster": "open"
+      }
+    },
+    {
+      "time": "14:00",
+      "lifts": {
+        "Raven Ridge": "on-hold"
+      },
+      "trails": {
+        "Hut Run": "open",
+        "Webb-Site": "open",
+        "Bowen Face": "open"
+      }
+    },
+    {
+      "time": "15:00",
+      "lifts": {
+        "Raven Ridge": "open"
+      },
+      "trails": {
+        "Lower Bowen": "open",
+        "Primary Power": "open",
+        "Slash": "open"
+      }
+    },
+    {
+      "time": "16:00",
+      "trails": {
+        "Top Gun": "closed",
+        "Ripcord": "closed",
+        "Glades": "closed"
+      }
+    },
+    {
+      "time": "17:00",
+      "lifts": {
+        "Raven Ridge": "closed",
+        "Sky Quad": "closed"
+      },
+      "trails": {
+        "Crazy Raven": "closed",
+        "Black on Black": "closed",
+        "Meteor": "closed"
+      }
+    }
+  ]
+}
