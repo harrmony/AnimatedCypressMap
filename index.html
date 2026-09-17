@@ -4,33 +4,97 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Cypress Mountain Status Map</title>
+
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="favicon.png">
-
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-curve@1.0.0/leaflet.curve.js"></script>
 
-
   <style>
-    html, body, #map { height: 100%; margin: 0; }
-    .legend {
-      position: absolute; top: 12px; left: 12px; z-index: 1000;
-      background: rgba(255,255,255,0.92); padding: 10px 12px; border-radius: 10px;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      font-size: 14px;      
+    html, body, #map {
+      height: 100%;
+      margin: 0;
     }
-    
+
+    .legend {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 1000;
+      background: rgba(255,255,255,0.92);
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 14px;
+    }
+
     .leaflet-top.leaflet-left {
       top: 135px;
     }
 
-    .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:8px; }
-    .open { background: #2ecc71; }
-    .hold { background: #f1c40f; }
-    .closed { background: #ff6447; }
-    .unknown { background: #9b59b6; }
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .open {
+      background: #2ecc71;
+    }
+
+    .hold {
+      background: #f1c40f;
+    }
+
+    .closed {
+      background: #ff6447;
+    }
+
+    .unknown {
+      background: #9b59b6;
+    }
+
+    /* Demo clock */
+    .demo-clock {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      z-index: 1100;
+
+      background: rgba(255,255,255,0.94);
+      padding: 12px 18px;
+      border-radius: 12px;
+
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      min-width: 150px;
+    }
+
+    #demo-time {
+      font-size: 28px;
+      line-height: 1.05;
+      font-weight: 800;
+      color: #0B2D5C;
+    }
+
+    #demo-counts {
+      margin-top: 5px;
+      font-size: 12px;
+      line-height: 1.3;
+      color: rgba(0,0,0,0.65);
+    }
+
+    /* Makes status colour changes feel smoother */
+    .leaflet-interactive {
+      transition:
+        stroke 0.45s ease,
+        stroke-opacity 0.45s ease;
+    }
 
     .footer-disclaimer {
       position: absolute;
@@ -55,240 +119,733 @@
     .footer-disclaimer a:hover {
       color: rgba(0, 0, 0, 0.85);
     }
-
   </style>
-
 </head>
 
-
-
 <body>
+
   <div id="map"></div>
+
   <div class="legend">
     <div><span class="dot open"></span>Open</div>
     <div><span class="dot hold"></span>On-hold</div>
     <div><span class="dot closed"></span>Closed</div>
-    <div style="margin-top:8px; font-size:12px; opacity:.8" id="updated"></div>
+
+    <div
+      style="margin-top:8px; font-size:12px; opacity:.8"
+      id="updated">
+      Animated demo
+    </div>
   </div>
 
+  <div class="demo-clock">
+    <div id="demo-time">8:00 AM</div>
+    <div id="demo-counts">Loading...</div>
+  </div>
+
+
   <script>
+
     const IMAGE_WIDTH = 2000;
     const IMAGE_HEIGHT = 857;
 
-    const bounds = [[0,0], [IMAGE_HEIGHT, IMAGE_WIDTH]]; // [y,x]
+    const bounds = [
+      [0, 0],
+      [IMAGE_HEIGHT, IMAGE_WIDTH]
+    ];
 
-    const map = L.map('map', {
+
+    // ==========================================
+    // DEMO TIMING
+    // ==========================================
+
+    // Normal hourly step duration
+    const NORMAL_STEP_MS = 1800;
+
+    // Long pause at 11am so you can zoom / hover
+    const INTERACTION_TIME = "11:00";
+    const INTERACTION_PAUSE_MS = 10000;
+
+    // Slightly longer pause at the end of the day
+    const END_OF_DAY_PAUSE_MS = 3000;
+
+
+    // ==========================================
+    // MAP SETUP
+    // ==========================================
+
+    const map = L.map("map", {
       crs: L.CRS.Simple,
       minZoom: -3,
-      maxZoom: 2, 
+      maxZoom: 2
     });
 
+    const overlay = L.imageOverlay(
+      "map.jpg",
+      bounds
+    ).addTo(map);
 
-    const isPortrait = window.innerHeight > window.innerWidth;
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-
-
-    const overlay = L.imageOverlay('map.jpg', bounds).addTo(map);
 
     function isMobilePortrait() {
-      return window.matchMedia("(max-width: 768px)").matches &&
-            window.matchMedia("(orientation: portrait)").matches;
+      return (
+        window.matchMedia("(max-width: 768px)").matches &&
+        window.matchMedia("(orientation: portrait)").matches
+      );
     }
 
+
     function applyInitialView() {
+
       map.invalidateSize();
 
       if (isMobilePortrait()) {
-        map.fitBounds(bounds, { paddingTopLeft: [0, 80], paddingBottomRight: [0, 80] });
-        map.setZoom(-2.5); // portrait start
+
+        map.fitBounds(bounds, {
+          paddingTopLeft: [0, 80],
+          paddingBottomRight: [0, 80]
+        });
+
+        map.setZoom(-2.5);
+
       } else {
+
         map.fitBounds(bounds);
-        map.setZoom(-1);   // desktop (and mobile landscape) start
+        map.setZoom(-1);
+
       }
     }
 
-    // Wait for the image to actually load, then fit
+
     overlay.once("load", () => {
       applyInitialView();
     });
 
-    // If the image is cached and load already happened, still apply
     setTimeout(applyInitialView, 0);
 
 
 
+    // ==========================================
+    // STYLE HELPERS
+    // ==========================================
 
-    // FOR ADDING COORDINATES
-    //  map.on('click', (e) => {
-    //    // e.latlng is in image coordinates for CRS.Simple
-    //    const x = e.latlng.lng;
-    //    const y = e.latlng.lat;
-    //    console.log(`Clicked: [${Math.round(x)}, ${Math.round(y)}]`);
-    //  });
-
-    
     function normalizeStyle(status, kind) {
-      const weight = kind === "lift" ? 7 : 4;
-      if (status === "open") return { weight, opacity: 0.45 };
-      if (status === "on-hold") return { weight, opacity: 0.35, dashArray: "8 10" };
-      if (status === "closed") return { weight, opacity: 0.7 };
-      return { weight, opacity: 0.5, dashArray: "2 8" };
+
+      const weight =
+        kind === "lift"
+          ? 7
+          : 4;
+
+      if (status === "open") {
+        return {
+          weight,
+          opacity: 0.45,
+          dashArray: null
+        };
+      }
+
+      if (status === "on-hold") {
+        return {
+          weight,
+          opacity: 0.35,
+          dashArray: "8 10"
+        };
+      }
+
+      if (status === "closed") {
+        return {
+          weight,
+          opacity: 0.7,
+          dashArray: null
+        };
+      }
+
+      return {
+        weight,
+        opacity: 0.5,
+        dashArray: "2 8"
+      };
     }
 
-    async function loadAll() {
-      const [overlays, curvesData, status] = await Promise.all([
-        fetch('overlays.geojson?ts=' + Date.now()).then(r => r.json()),
-        fetch('curves.json?ts=' + Date.now()).then(r => r.json()),
-        fetch('https://raw.githubusercontent.com/harrmony/AnimatedCypressMap/data/status.json?ts=' + Date.now()).then(r => r.json())
-      ]);
 
-      function formatVancouverTime(isoString) {
-        if (!isoString) return "(unknown)";
+    function getStyle(status, kind) {
 
-        const date = new Date(isoString);
+      const color =
+        status === "open"
+          ? "#2ecc71"
+          : status === "on-hold"
+          ? "#f1c40f"
+          : status === "closed"
+          ? "#ff6447"
+          : "#9b59b6";
 
-        return date.toLocaleString("en-CA", {
-          timeZone: "America/Vancouver",
-          weekday: "short",
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-          hour: "numeric",
-          minute: "2-digit",
-          hour12: true
-        });
+      return {
+        color,
+        ...normalizeStyle(status, kind)
+      };
+    }
+
+
+    function readableStatus(status) {
+
+      if (status === "on-hold") {
+        return "on hold";
       }
 
-      document.getElementById('updated').textContent =
-        status.source_updated
-          ? `Updated: ${formatVancouverTime(status.source_updated)}`
-          : `Updated: (unknown)`;
+      return status;
+    }
 
 
-      function getFeatureStatus(feature) {
-        const name = feature.properties.name;
-        const kind = feature.properties.kind;
-        if (kind === "lift") return status.lifts?.[name] ?? "unknown";
-        if (kind === "trail") return status.trails?.[name] ?? "unknown";
-        return "unknown";
-      }
 
-      // 1) Draw straight (GeoJSON) overlays
-      L.geoJSON(overlays, {
-        style: (feature) => {
-          const s = getFeatureStatus(feature);
-          const kind = feature.properties.kind;
+    // ==========================================
+    // DEMO STATE
+    // ==========================================
 
-          const color =
-            s === "open" ? "#2ecc71" :
-            s === "on-hold" ? "#f1c40f" :
-            s === "closed" ? "#ff6447" :
-            "#9b59b6";
+    const demoLayers = [];
 
-          return { color, ...normalizeStyle(s, kind) };
-        },
-        onEachFeature: (feature, layer) => {
-          const s = getFeatureStatus(feature);
-          layer.bindTooltip(`${feature.properties.name} — ${s}`, { sticky: true });
+    const demoState = {
+      lifts: {},
+      trails: {}
+    };
+
+
+    function registerDemoLayer(layer, name, kind) {
+
+      demoLayers.push({
+        layer,
+        name,
+        kind
+      });
+
+      const bucket =
+        kind === "lift"
+          ? demoState.lifts
+          : demoState.trails;
+
+      // Everything begins closed
+      bucket[name] = "closed";
+
+      layer.bindTooltip(
+        `${name} — closed`,
+        {
+          sticky: true
         }
-      }).addTo(map);
-
-      // 2) Draw curved overlays on top (THIS is step 6)
-      drawCurvedOverlays(curvesData, status);
+      );
     }
 
 
-    // FOR LOADING CURVES
-    // Helper: your data uses [x,y], Leaflet wants [lat,lng] = [y,x]
-    const XY = (x, y) => [y, x];
+    function resetDemoState() {
 
-    function catmullRomToBezierPath(pointsXY, tension = 0.8) {
-      if (!pointsXY || pointsXY.length < 2) throw new Error("Need at least 2 points");
+      for (const item of demoLayers) {
 
-      const pts = pointsXY.map(([x, y]) => ({ x, y }));
-      const p = [pts[0], ...pts, pts[pts.length - 1]]; // duplicate ends
-      const path = ["M", XY(p[1].x, p[1].y)];
+        const bucket =
+          item.kind === "lift"
+            ? demoState.lifts
+            : demoState.trails;
 
-      const k = tension / 6;
-
-      for (let i = 1; i < p.length - 2; i++) {
-        const p0 = p[i - 1], p1 = p[i], p2 = p[i + 1], p3 = p[i + 2];
-
-        const cp1x = p1.x + (p2.x - p0.x) * k;
-        const cp1y = p1.y + (p2.y - p0.y) * k;
-
-        const cp2x = p2.x - (p3.x - p1.x) * k;
-        const cp2y = p2.y - (p3.y - p1.y) * k;
-
-        path.push("C", XY(cp1x, cp1y), XY(cp2x, cp2y), XY(p2.x, p2.y));
+        bucket[item.name] = "closed";
       }
+    }
+
+
+    function updateDemoLayers() {
+
+      for (const item of demoLayers) {
+
+        const bucket =
+          item.kind === "lift"
+            ? demoState.lifts
+            : demoState.trails;
+
+        const status =
+          bucket[item.name] ?? "closed";
+
+        item.layer.setStyle(
+          getStyle(status, item.kind)
+        );
+
+        item.layer.setTooltipContent(
+          `${item.name} — ${readableStatus(status)}`
+        );
+      }
+    }
+
+
+    function updateCounts() {
+
+      const openLifts =
+        Object.values(demoState.lifts)
+          .filter(status => status === "open")
+          .length;
+
+      const openTrails =
+        Object.values(demoState.trails)
+          .filter(status => status === "open")
+          .length;
+
+      document.getElementById("demo-counts").textContent =
+        `${openTrails} runs open • ${openLifts} lifts open`;
+    }
+
+
+
+    // ==========================================
+    // TIME DISPLAY
+    // ==========================================
+
+    function formatDemoTime(time) {
+
+      const [hourString, minute] =
+        time.split(":");
+
+      let hour =
+        Number(hourString);
+
+      const suffix =
+        hour >= 12
+          ? "PM"
+          : "AM";
+
+      hour = hour % 12;
+
+      if (hour === 0) {
+        hour = 12;
+      }
+
+      return `${hour}:${minute} ${suffix}`;
+    }
+
+
+
+    // ==========================================
+    // APPLY ONE HOURLY STEP
+    // ==========================================
+
+    function applyDemoStep(step) {
+
+      // Apply lift changes
+      for (
+        const [name, status]
+        of Object.entries(step.lifts ?? {})
+      ) {
+        demoState.lifts[name] = status;
+      }
+
+
+      // Apply trail changes
+      for (
+        const [name, status]
+        of Object.entries(step.trails ?? {})
+      ) {
+        demoState.trails[name] = status;
+      }
+
+
+      document
+        .getElementById("demo-time")
+        .textContent =
+          formatDemoTime(step.time);
+
+
+      updateDemoLayers();
+      updateCounts();
+    }
+
+
+
+    // ==========================================
+    // DEMO LOOP
+    // ==========================================
+
+    function runDemo(timeline) {
+
+      const steps =
+        timeline.steps ?? [];
+
+      if (!steps.length) {
+        console.error(
+          "No demo timeline steps found."
+        );
+        return;
+      }
+
+
+      let stepIndex = 0;
+
+
+      function nextStep() {
+
+        // Starting a new day
+        if (stepIndex === 0) {
+
+          resetDemoState();
+          updateDemoLayers();
+
+        }
+
+
+        const step =
+          steps[stepIndex];
+
+        applyDemoStep(step);
+
+
+        let delay =
+          NORMAL_STEP_MS;
+
+
+        // Long interaction pause at 11am
+        if (
+          step.time ===
+          INTERACTION_TIME
+        ) {
+
+          delay =
+            INTERACTION_PAUSE_MS;
+
+        }
+
+
+        // Longer pause at 5pm
+        if (
+          stepIndex ===
+          steps.length - 1
+        ) {
+
+          delay =
+            END_OF_DAY_PAUSE_MS;
+
+        }
+
+
+        stepIndex++;
+
+
+        // Loop back to 8am
+        if (
+          stepIndex >=
+          steps.length
+        ) {
+
+          stepIndex = 0;
+
+        }
+
+
+        setTimeout(
+          nextStep,
+          delay
+        );
+      }
+
+
+      nextStep();
+    }
+
+
+
+    // ==========================================
+    // CURVES
+    // ==========================================
+
+    const XY =
+      (x, y) => [y, x];
+
+
+    function catmullRomToBezierPath(
+      pointsXY,
+      tension = 0.8
+    ) {
+
+      if (
+        !pointsXY ||
+        pointsXY.length < 2
+      ) {
+
+        throw new Error(
+          "Need at least 2 points"
+        );
+
+      }
+
+
+      const pts =
+        pointsXY.map(
+          ([x, y]) => ({
+            x,
+            y
+          })
+        );
+
+
+      const p = [
+        pts[0],
+        ...pts,
+        pts[pts.length - 1]
+      ];
+
+
+      const path = [
+        "M",
+        XY(
+          p[1].x,
+          p[1].y
+        )
+      ];
+
+
+      const k =
+        tension / 6;
+
+
+      for (
+        let i = 1;
+        i < p.length - 2;
+        i++
+      ) {
+
+        const p0 = p[i - 1];
+        const p1 = p[i];
+        const p2 = p[i + 1];
+        const p3 = p[i + 2];
+
+
+        const cp1x =
+          p1.x +
+          (p2.x - p0.x) * k;
+
+        const cp1y =
+          p1.y +
+          (p2.y - p0.y) * k;
+
+
+        const cp2x =
+          p2.x -
+          (p3.x - p1.x) * k;
+
+        const cp2y =
+          p2.y -
+          (p3.y - p1.y) * k;
+
+
+        path.push(
+          "C",
+          XY(cp1x, cp1y),
+          XY(cp2x, cp2y),
+          XY(p2.x, p2.y)
+        );
+      }
+
 
       return path;
     }
 
-    function drawCurvedOverlays(curvesData, status) {
-      const curves = curvesData?.curves ?? [];
+
+
+    function drawCurvedOverlays(
+      curvesData
+    ) {
+
+      const curves =
+        curvesData?.curves ?? [];
+
 
       for (const f of curves) {
-        const s =
-          f.kind === "lift" ? (status.lifts?.[f.name] ?? "unknown") :
-          f.kind === "trail" ? (status.trails?.[f.name] ?? "unknown") :
-          "unknown";
 
-        const color =
-          s === "open" ? "#2ecc71" :
-          s === "on-hold" ? "#f1c40f" :
-          s === "closed" ? "#ff6447" :
-          "#9b59b6";
+        const path =
+          catmullRomToBezierPath(
+            f.points,
+            f.tension ?? 0.8
+          );
 
-        const path = catmullRomToBezierPath(f.points, f.tension ?? 0.8);
 
-        const layer = L.curve(path, {
-          color,
-          ...normalizeStyle(s, f.kind) // reuses your existing styling rules
-        }).addTo(map);
+        const layer =
+          L.curve(
+            path,
+            getStyle(
+              "closed",
+              f.kind
+            )
+          ).addTo(map);
 
-        layer.bindTooltip(`${f.name} — ${s}`, { sticky: true });
+
+        registerDemoLayer(
+          layer,
+          f.name,
+          f.kind
+        );
       }
     }
 
 
 
-    loadAll().catch(err => {
-      console.error(err);
-      alert("Failed to load overlays/status. Check console.");
-    });
+    // ==========================================
+    // LOAD MAP + DEMO DATA
+    // ==========================================
+
+    async function loadAll() {
+
+      const [
+        overlays,
+        curvesData,
+        timeline
+      ] =
+        await Promise.all([
+
+          fetch(
+            "overlays.geojson?ts=" +
+            Date.now()
+          ).then(
+            response =>
+              response.json()
+          ),
+
+          fetch(
+            "curves.json?ts=" +
+            Date.now()
+          ).then(
+            response =>
+              response.json()
+          ),
+
+          fetch(
+            "demo-timeline.json?ts=" +
+            Date.now()
+          ).then(
+            response =>
+              response.json()
+          )
+
+        ]);
+
+
+      // Straight GeoJSON lines
+      L.geoJSON(
+        overlays,
+        {
+
+          style: feature => {
+
+            return getStyle(
+              "closed",
+              feature.properties.kind
+            );
+
+          },
+
+
+          onEachFeature:
+            (feature, layer) => {
+
+              registerDemoLayer(
+                layer,
+                feature.properties.name,
+                feature.properties.kind
+              );
+
+            }
+
+        }
+      ).addTo(map);
+
+
+      // Curved runs / lift
+      drawCurvedOverlays(
+        curvesData
+      );
+
+
+      // Make sure everything initially starts red
+      resetDemoState();
+      updateDemoLayers();
+      updateCounts();
+
+
+      // Start the animation
+      runDemo(
+        timeline
+      );
+    }
+
+
+
+    loadAll().catch(
+      err => {
+
+        console.error(err);
+
+        alert(
+          "Failed to load demo map. Check console."
+        );
+
+      }
+    );
+
   </script>
+
 
   <script>
+
     function trackClick(label) {
-      if (typeof gtag === "function") {
-        gtag('event', 'outbound_click', {
-          event_category: 'engagement',
-          event_label: label,
-          transport_type: 'beacon'
-        });
+
+      if (
+        typeof gtag === "function"
+      ) {
+
+        gtag(
+          "event",
+          "outbound_click",
+          {
+            event_category:
+              "engagement",
+            event_label:
+              label,
+            transport_type:
+              "beacon"
+          }
+        );
+
       }
     }
+
   </script>
 
+
   <div class="footer-disclaimer">
-  Unofficial map by <a href="https://www.linkedin.com/in/harrisonmorris/"
-     target="_blank"
-     rel="noopener"
-     class="author-link"
-     onclick="trackClick('linkedin')">
-    Harry Morris
-    </a>. For official information, refer to
-    <a href="https://www.cypressmountain.com" target="_blank" rel="noopener" onclick="trackClick('cypress_official')">
+
+    Unofficial map by
+
+    <a
+      href="https://www.linkedin.com/in/harrisonmorris/"
+      target="_blank"
+      rel="noopener"
+      class="author-link"
+      onclick="trackClick('linkedin')">
+      Harry Morris
+    </a>.
+
+    For official information, refer to
+
+    <a
+      href="https://www.cypressmountain.com"
+      target="_blank"
+      rel="noopener"
+      onclick="trackClick('cypress_official')">
       Cypress Mountain
     </a>
-     Reports. 
-    <a href="https://buymeacoffee.com/harrmony" target="_blank" rel="noopener" onclick="trackClick('buy_me_a_coffee')">
-      Buy me a beer
-    </a> if you want to support this project.
-  </div>
 
+    Reports.
+
+    <a
+      href="https://buymeacoffee.com/harrmony"
+      target="_blank"
+      rel="noopener"
+      onclick="trackClick('buy_me_a_coffee')">
+      Buy me a beer
+    </a>
+
+    if you want to support this project.
+
+  </div>
 
 </body>
 </html>
