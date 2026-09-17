@@ -682,103 +682,87 @@
     // LOAD MAP + DEMO DATA
     // ==========================================
 
+    async function fetchJson(url) {
+      const response = await fetch(url);
+    
+      if (!response.ok) {
+        throw new Error(
+          `Failed to load ${url}: HTTP ${response.status}`
+        );
+      }
+    
+      try {
+        return await response.json();
+      } catch (err) {
+        throw new Error(
+          `Invalid JSON in ${url}: ${err.message}`
+        );
+      }
+    }
+    
+    
     async function loadAll() {
-
+    
+      const ts = Date.now();
+    
       const [
         overlays,
         curvesData,
         timeline
-      ] =
-        await Promise.all([
-
-          fetch(
-            "overlays.geojson?ts=" +
-            Date.now()
-          ).then(
-            response =>
-              response.json()
-          ),
-
-          fetch(
-            "curves.json?ts=" +
-            Date.now()
-          ).then(
-            response =>
-              response.json()
-          ),
-
-          fetch(
-            "demo-timeline.json?ts=" +
-            Date.now()
-          ).then(
-            response =>
-              response.json()
-          )
-
-        ]);
-
-
+      ] = await Promise.all([
+    
+        fetchJson(
+          `overlays.geojson?ts=${ts}`
+        ),
+    
+        fetchJson(
+          `curves.json?ts=${ts}`
+        ),
+    
+        fetchJson(
+          `demo-timeline.json?ts=${ts}`
+        )
+    
+      ]);
+    
       // Straight GeoJSON lines
       L.geoJSON(
         overlays,
         {
-
           style: feature => {
-
             return getStyle(
               "closed",
               feature.properties.kind
             );
-
           },
-
-
+    
           onEachFeature:
             (feature, layer) => {
-
               registerDemoLayer(
                 layer,
                 feature.properties.name,
                 feature.properties.kind
               );
-
             }
-
         }
       ).addTo(map);
-
-
-      // Curved runs / lift
-      drawCurvedOverlays(
-        curvesData
-      );
-
-
-      // Make sure everything initially starts red
+    
+      drawCurvedOverlays(curvesData);
+    
       resetDemoState();
       updateDemoLayers();
       updateCounts();
-
-
-      // Start the animation
-      runDemo(
-        timeline
-      );
+    
+      runDemo(timeline);
     }
-
-
-
-    loadAll().catch(
-      err => {
-
-        console.error(err);
-
-        alert(
-          "Failed to load demo map. Check console."
-        );
-
-      }
-    );
+    
+    loadAll().catch(err => {
+      console.error(err);
+    
+      alert(
+        `Failed to load demo map:\n\n${err.message}`
+      );
+    });
 
   </script>
 
